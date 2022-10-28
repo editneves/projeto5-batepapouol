@@ -1,73 +1,40 @@
-//A cada 3 segundos o site deve re-carregar as mensagens do servidor para manter sempre atualizado
-var meuInterval = setInterval(function() {
-    console.log(pegarMessage());
-}, 3000);
-clearInterval(meuInterval);
 
-function scrolar() {
-    const element = document.querySelector('.container');
-    element.scrollIntoView();
-}
+let resposta1=0;//A cada 3 segundos o site deve re-carregar as mensagens do servidor para manter sempre atualizado
+let inputMessage = '';
+let message = []; //pegar mensagens que já foram salvas na internet e trazer pra cá
 
 usuario()
-conexao()
 
 function usuario() {
+    const ediane = { name: "Ediane" }
 
-    const requisicao = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", { name: "Ediane" });
-    requisicao.then(Sucesso);
-    requisicao.catch(Error);
-
-    function Sucesso(resposta) {
-        console.log(resposta);
-    }
-    function Error(erro) {
-        console.log(erro);
-    }
+    axios.post(
+        "https://mock-api.driven.com.br/api/v6/uol/participants",
+        ediane
+    )
+    .then(conexao())
+    .catch(function (error) {
+        console.log(error)
+    })
 }
 
 function conexao() {
-    const request = axios.post("https://mock-api.driven.com.br/api/v6/uol/status", { name: "Ediane" });
-    request.then(certo);
-    request.catch(Errado);
-
-    function certo(resposta) {
-        console.log(resposta);
-    }
-    function Errado(erro) {
-        console.log(erro);
-    }
+    const ediane = { name: "Ediane" }
+    axios.post(
+        "https://mock-api.driven.com.br/api/v6/uol/status",
+        ediane
+    )
+    .then(function (certo) {
+        console.log(certo.data)
+        if(certo.data == "OK"){
+            adicionarMessage()
+            pegarMessage() }
+    }) 
+    .catch(function (error) {
+        console.log(error)
+    })
 }
 
-const adicinarMessage = async () => {
-    const dados =
-    {
-        from: 'Ediane',
-        to: 'Todos',
-        text: 'entra na sala...',
-        type: "message"
-    };
-
-    try {
-        const resp = await axios.post('https://mock-api.driven.com.br/api/v6/uol/messages', dados);
-        console.log(resp.data); // é o array da resposta
-        renderizarLista();
-    } catch (erro) {
-        // Handle Error Here
-        console.error(erro);
-        if (erro.response.status === 422) {
-            alert(erro.response.data.detalhes[0] + ', ' + erro.response.data.detalhes[1]);
-        } else if (erro.response.status === 404) {
-            alert("O recurso não foi encontrada no servidor");
-        } else {
-            alert("ocorreu um erro!");
-        }
-    }
-};
-
-adicinarMessage()
-
-let message = []; //pegar mensagens que já foram salvas na internet e trazer pra cá
 function pegarMessage() {
 
     //  mandar uma requisição GET para a URL, para buscar mensagens do servidor
@@ -76,14 +43,39 @@ function pegarMessage() {
     promessa.then(respostaChegou); // agendando para a função respostaChegou ser esecuta quando a resposta do servidor chegar
 
     function respostaChegou(resposta) { // tratar sucesso
-        //console.log(resposta);
         console.log(resposta.data);  // é o array da resposta
         message = resposta.data;
         //renderizar as mensagens vindas do servidor
         renderizarLista();
     }
 }
-pegarMessage()
+C:\Users\ruann\dev\ediane\Driven Curso\Projeto #05 - Bate-Papo UOL dev
+function adicionarMessage() {
+    inputMessage = document.querySelector('input').value;
+    const novaMessage =
+    {
+        from: 'Ediane',
+        to: 'Todos',
+        text: inputMessage,
+        type: 'message'
+    };
+    message.push(novaMessage);
+
+    axios.get(
+        'https://mock-api.driven.com.br/api/v6/uol/messages',
+        novaMessage
+    )
+    .then(function (resp) {
+        resposta1= resp
+        console.log(resposta1)
+        console.log(inputMessage)
+        renderizarLista();
+    }) 
+    .catch(function (erro) {
+        console.log(erro)
+        window.location.reload()
+    })
+}
 
 function renderizarLista() {
 
@@ -129,4 +121,10 @@ function renderizarLista() {
                     `;
         }
     }
+    scrolar()
+}
+
+function scrolar() {
+    const elementoQueQueroQueApareca = document.getElementById("scrol");
+    elementoQueQueroQueApareca.scrollIntoView();
 }

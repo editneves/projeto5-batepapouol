@@ -49,18 +49,22 @@
                 </p>
             </li> -->
         </ul>
+        <div id="scrol"></div>
     </div>
 
     <div class="footer">
         <!-- caixa onde a mensagem será digitada -->
         <div class="div">
-            <input type="text" placeholder="Escreva aqui..." class="footer-message">
-            <img src="./assest/enviar.png" alt="submit">
+            <input type="text" placeholder="Escreva aqui..." class="footer-message" id="input">
+            <input type="image" onclick="adicionarMessage()"  src="./assest/enviar.png" alt="submit" width="26px" height="26px" left="27px"
+            top="18px">
+            
         </div>
     </div>
-  
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="index.js"></script>
+
 </body>
 
 </html>
