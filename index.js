@@ -158,4 +158,3 @@ function scrolar() {
     const elementoQueQueroQueApareca = document.getElementById("scrol");
     elementoQueQueroQueApareca.scrollIntoView();
 }
-C:\Users\ruann\dev\ediane\Driven Curso\Projeto #05 - Bate-Papo UOLcd 
