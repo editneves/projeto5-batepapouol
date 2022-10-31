@@ -105,7 +105,7 @@ function renderizarLista(message) {
                         </p>
                     </li>
                     `;
-        } else if (item.type === "private_message") {
+        } else if (item.type === "private_message" && item.from===) {
             lista.innerHTML += `
                     <li class="message-privately">
                         <p>
