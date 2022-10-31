@@ -27,6 +27,7 @@ function usuario() {
         })
 }
 
+
 function conexao() {
     const user = { name: novoUsuario }
     console.log(novoUsuario)
