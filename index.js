@@ -1,38 +1,76 @@
-
-let resposta1=0;//A cada 3 segundos o site deve re-carregar as mensagens do servidor para manter sempre atualizado
+let novoUsuario = prompt(" Digite o seu nome: ");
+//let resposta1=0;//A cada 3 segundos o site deve re-carregar as mensagens do servidor para manter sempre atualizado
 let inputMessage = '';
 let message = []; //pegar mensagens que já foram salvas na internet e trazer pra cá
 
 usuario()
 
 function usuario() {
-    const ediane = { name: "Ediane" }
+
+    const user = { name: novoUsuario }
 
     axios.post(
         "https://mock-api.driven.com.br/api/v6/uol/participants",
-        ediane
-    )
-    .then(conexao())
-    .catch(function (error) {
-        console.log(error)
-    })
+        user
+    )  
+    .then(setTimeout(conexao(), 100000000))
+        .catch(function (error) {
+            console.log(error)
+            if (error.response.status === 400) {
+                novoUsuario = prompt(" Erro 400 (Bad Request), já existe um usuário online com esse nome,por favor informe um novo usuário ");
+                usuario(novoUsuario)
+            } else if (error.response.status === 404) {
+                alert("O recurso não foi encontrada no servidor");
+            } else {
+                alert("ocorreu um erro!");
+            }
+        })
 }
 
 function conexao() {
-    const ediane = { name: "Ediane" }
+    const user = { name: novoUsuario }
+    console.log(novoUsuario)
     axios.post(
         "https://mock-api.driven.com.br/api/v6/uol/status",
-        ediane
+        user
     )
-    .then(function (certo) {
-        console.log(certo.data)
-        if(certo.data == "OK"){
-            adicionarMessage()
-            pegarMessage() }
-    }) 
-    .catch(function (error) {
-        console.log(error)
-    })
+        .then(function (certo) {
+            console.log(certo.data)
+            if (certo.data == "OK") {
+                //adicionarMessage()
+                //pegarMessage() }
+                console.log("oi")
+            }
+        })
+        .catch(function (erro) {
+            console.log(erro)
+        })
+}
+
+function adicionarMessage() {
+    inputMessage = document.querySelector('input').value;
+    const novaMessage =
+    {
+        from: usuario,
+        to: 'Todos',
+        text: inputMessage,
+        type: 'message'
+    };
+    //message.push(novaMessage);
+    axios.post(
+        'https://mock-api.driven.com.br/api/v6/uol/messages',
+        novaMessage
+    )
+        .then(function (resp) {
+            // resposta1= resp
+            console.log(resp)
+            console.log(inputMessage)
+            renderizarLista();
+        })
+        .catch(function (errado) {
+            console.log(errado)
+            window.location.reload()
+        })
 }
 
 function pegarMessage() {
@@ -49,34 +87,6 @@ function pegarMessage() {
         renderizarLista();
     }
 }
-C:\Users\ruann\dev\ediane\Driven Curso\Projeto #05 - Bate-Papo UOL dev
-function adicionarMessage() {
-    inputMessage = document.querySelector('input').value;
-    const novaMessage =
-    {
-        from: 'Ediane',
-        to: 'Todos',
-        text: inputMessage,
-        type: 'message'
-    };
-    message.push(novaMessage);
-
-    axios.get(
-        'https://mock-api.driven.com.br/api/v6/uol/messages',
-        novaMessage
-    )
-    .then(function (resp) {
-        resposta1= resp
-        console.log(resposta1)
-        console.log(inputMessage)
-        renderizarLista();
-    }) 
-    .catch(function (erro) {
-        console.log(erro)
-        window.location.reload()
-    })
-}
-
 function renderizarLista() {
 
     const lista = document.querySelector('ul');
