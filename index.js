@@ -1,11 +1,11 @@
-let novoUsuario = prompt(" Digite o seu nome: ");
-//let resposta1=0;//A cada 3 segundos o site deve re-carregar as mensagens do servidor para manter sempre atualizado
-let inputMessage = '';
+let novoUsuario = prompt(" Digite o seu nome: "); // entrada do nome do usuária que ira entrar no chat
+let inputMessage = ''; // declaração da variavel responsavel por receber a mensagem que será digitada no chat
 
 usuario()
 pegarMessage()
 
-
+// a função usuario envia para a API o nome do usuário que vai entrar no batepapo, caso o usuário já esteja online 
+// solicita um novo nome de usuário e chama a função de conexão
 function usuario() {
 
     const user = { name: novoUsuario }
@@ -28,6 +28,7 @@ function usuario() {
         })
 }
 
+// a função conexão matem o usuário conectado, envia os dados para API a cada 5 segundos
 function conexao() {
     const user = { name: novoUsuario }
     //console.log(novoUsuario)
@@ -54,14 +55,23 @@ function adicionarMessage() {
         text: inputMessage,
         type: 'message'
     };
-    //message.push(novaMessage);
+
+    // teste de envio privado -- nome do destinatário igual ao nome do usuário que está usando o chat
+
+    // {
+    //     from: novoUsuario,
+    //     to: novoUsuario,
+    //     text: inputMessage,
+    //     type: 'private_message'
+    // };
+
     axios.post(
         'https://mock-api.driven.com.br/api/v6/uol/messages',
         novaMessage
     )
         .then(function (resp) {
-            console.log(resp)
-            console.log(inputMessage)
+            //console.log(resp)
+            //console.log(inputMessage)
             setTimeout(pegarMessage(), 100000000)
         })
         .catch(function (errado) {
@@ -70,12 +80,15 @@ function adicionarMessage() {
         })
 }
 
+// a função pegarMessage busca as mensagens na API  e depois chama a função renderizarLista passando
+// o resultado como parametro, assim as mensagem são atualizadas na tela com as mensagens novas que vem da API
 function pegarMessage() {
 
     //  mandar uma requisição GET para a URL, para buscar mensagens do servidor
     const promessa = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages');
     // resposta do servidor
-    promessa.then(respostaChegou); // agendando para a função respostaChegou ser esecuta quando a resposta do servidor chegar
+    promessa.then(respostaChegou); // agendando para a função respostaChegou ser executada quando a resposta 
+    //do servidor chegar
 
     function respostaChegou(resposta) { // tratar sucesso
         console.log(resposta.data);  // é o array da resposta
@@ -85,6 +98,7 @@ function pegarMessage() {
     }
 }
 
+// a função renderizarLista atualiza as mensagens na tela a cada 3 segundos
 function renderizarLista(message) {
 
     const lista = document.querySelector('ul');
@@ -95,6 +109,7 @@ function renderizarLista(message) {
 
         let item = message[i];
 
+        // Mensagens de status (Entrou ou Saiu da sala): com fundo cinza
         if (item.text === 'entra na sala...' || item.text === 'sai da sala...') {
             lista.innerHTML += `
                     <li class="message-log-in-go-out">
@@ -105,7 +120,8 @@ function renderizarLista(message) {
                         </p>
                     </li>
                     `;
-        } else if (item.type === "private_message" && item.from===) {
+        //Mensagens reservadas (Reservadamente): com fundo rosa
+        } else if (item.type === "private_message" && item.from===item.to) {
             lista.innerHTML += `
                     <li class="message-privately">
                         <p>
@@ -116,6 +132,7 @@ function renderizarLista(message) {
                         </p>
                     </li>
                     `;
+        // Mensagens normais: com fundo branco
         } else {
             lista.innerHTML += `
                     <li class="message-normal">
@@ -129,11 +146,16 @@ function renderizarLista(message) {
                     `;
         }
     }
+    // o site re-carregar as mensagens do servidor a cada 3 segundos para manter sempre atualizado
     setInterval(pegarMessage(), 3000);
+    // uso da função scrollIntoView, para o chat ter rolagem automática 
     scrolar()
+    
 }
 
+// uso da função scrollIntoView, para o chat ter rolagem automática 
 function scrolar() {
     const elementoQueQueroQueApareca = document.getElementById("scrol");
     elementoQueQueroQueApareca.scrollIntoView();
 }
+C:\Users\ruann\dev\ediane\Driven Curso\Projeto #05 - Bate-Papo UOLcd 
