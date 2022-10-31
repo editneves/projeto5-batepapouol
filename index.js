@@ -1,9 +1,10 @@
 let novoUsuario = prompt(" Digite o seu nome: ");
 //let resposta1=0;//A cada 3 segundos o site deve re-carregar as mensagens do servidor para manter sempre atualizado
 let inputMessage = '';
-let message = []; //pegar mensagens que já foram salvas na internet e trazer pra cá
 
 usuario()
+pegarMessage()
+
 
 function usuario() {
 
@@ -12,8 +13,8 @@ function usuario() {
     axios.post(
         "https://mock-api.driven.com.br/api/v6/uol/participants",
         user
-    )  
-    .then(setTimeout(conexao(), 100000000))
+    )
+        .then(setTimeout(conexao(), 100000000))
         .catch(function (error) {
             console.log(error)
             if (error.response.status === 400) {
@@ -27,24 +28,20 @@ function usuario() {
         })
 }
 
-
 function conexao() {
     const user = { name: novoUsuario }
-    console.log(novoUsuario)
+    //console.log(novoUsuario)
     axios.post(
         "https://mock-api.driven.com.br/api/v6/uol/status",
         user
     )
         .then(function (certo) {
+            setInterval(conexao(), 5000);
             console.log(certo.data)
-            if (certo.data == "OK") {
-                //adicionarMessage()
-                //pegarMessage() }
-                console.log("oi")
-            }
         })
         .catch(function (erro) {
             console.log(erro)
+            setInterval(conexao(), 5000);
         })
 }
 
@@ -52,7 +49,7 @@ function adicionarMessage() {
     inputMessage = document.querySelector('input').value;
     const novaMessage =
     {
-        from: usuario,
+        from: novoUsuario,
         to: 'Todos',
         text: inputMessage,
         type: 'message'
@@ -63,10 +60,9 @@ function adicionarMessage() {
         novaMessage
     )
         .then(function (resp) {
-            // resposta1= resp
             console.log(resp)
             console.log(inputMessage)
-            renderizarLista();
+            setTimeout(pegarMessage(), 100000000)
         })
         .catch(function (errado) {
             console.log(errado)
@@ -85,10 +81,11 @@ function pegarMessage() {
         console.log(resposta.data);  // é o array da resposta
         message = resposta.data;
         //renderizar as mensagens vindas do servidor
-        renderizarLista();
+        renderizarLista(resposta.data);
     }
 }
-function renderizarLista() {
+
+function renderizarLista(message) {
 
     const lista = document.querySelector('ul');
 
@@ -132,6 +129,7 @@ function renderizarLista() {
                     `;
         }
     }
+    setInterval(pegarMessage(), 3000);
     scrolar()
 }
 
